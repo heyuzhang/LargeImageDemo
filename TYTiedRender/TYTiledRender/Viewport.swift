@@ -93,7 +93,7 @@ extension Viewport {
             let tapPoint = tap.location(in: tapView)
             //Bitmap
             let bufferView = Buffer(frame: thumbnailView.bounds, contentSize: CGSize.zero)
-            bufferView.bufferViewDid(x: tapPoint.x, y: tapPoint.y, with: tapView.bounds)
+//            bufferView.bufferViewDid(x: tapPoint.x, y: tapPoint.y, with: tapView.bounds)
             
             thumbnailView.addSubview(bufferView)
             

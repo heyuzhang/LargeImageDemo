@@ -17,6 +17,18 @@ struct XCoordinateMagage {
     /* 点击的坐标在新坐标系中的的位置 */
     var newPoint: CGPoint = .zero
     
+    //返回格式是 00_00
+    func imageName(in context: CGContext, use tiledLayer: CATiledLayer, with prefix: String?) -> String? {
+        
+        let bounds = context.boundingBoxOfClipPath
+        let x = Int(floorf(Float(bounds.origin.x / tiledLayer.tileSize.width)))
+        let y = Int(floorf(Float(bounds.origin.y / tiledLayer.tileSize.height)))
+        if prefix != nil {
+            return "\(prefix!)_\(y)_\(x)"
+        }
+        return "\(y)_\(x)"
+        
+    }
     
     /// 计算点击的坐标(x,y)在view坐标内的frame,已经点击位置图片的索引
     mutating func coordinateCalculate(x: CGFloat, y: CGFloat,from sourceView:UIView, to aimView: UIView, cutNumberX numberX:Int, cutNumberY numberY:Int) {

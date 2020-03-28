@@ -11,20 +11,26 @@ import UIKit
 class ViewController: UIViewController {
 
    lazy var viewPort = XImageView()
+    
+    var dymamicLoadImage: XDynamicLoadImage = XDynamicLoadImage()
     lazy var imagePath: String = {
         let sImage = Bundle.main.path(forResource: "缩率图", ofType: "png")
         return sImage ?? ""
     }()
+    
     override func viewDidLoad() {
          super.viewDidLoad()
-               view.backgroundColor = .white
+//        view.backgroundColor = .white
+        dymamicLoadImage.imageNamePrefix = "1"
+        view.addSubview(dymamicLoadImage)
     }
     
     
-   override func viewWillLayoutSubviews() {
-          super.viewWillLayoutSubviews()
-          viewPort.showImage(imagePath, in: view, with: view.bounds)
-      }
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        dymamicLoadImage.frame = view.bounds
+        //          viewPort.showImage(imagePath, in: view, with: view.bounds)
+    }
 
 }
 
