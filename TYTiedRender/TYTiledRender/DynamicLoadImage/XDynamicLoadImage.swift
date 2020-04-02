@@ -41,6 +41,10 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     //网络图片给的是url，也需要另处理
     var netImageURLStrs: [String]?
     
+    
+    ///倍率切换view
+    lazy var multipleSwitchView: XMultipleSwitchView = XMultipleSwitchView()
+    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.backgroundColor = .white
@@ -68,13 +72,20 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         
     }
     
+    required init?(coder: NSCoder) {
+           fatalError("init(coder:) has not been implemented")
+       }
+    
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         scrollView.frame = bounds
+        multipleSwitchView.frame = CGRect(x: 0, y: bounds.size.height - 50, width: bounds.size.width, height: 50)
         
     }
     
     private var tiledLayerDelegate: XTiledLayerDelegate = XTiledLayerDelegate()
+   
     private func setupUI() {
         scrollView.delegate = self
         scrollView.maximumZoomScale = 5
@@ -91,11 +102,22 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         scrollView.contentSize = tiledLayer.frame.size
 
         tiledLayer.setNeedsDisplay()
+        
+        //倍率切换
+        multipleSwitchView.backgroundColor = UIColor.init(white: 0, alpha: 0.1)
+        
+        multipleSwitchView.multiples = [
+            Rateinfo(imagePrefix: "1", rateName: "20x"),
+            Rateinfo(imagePrefix: "1", rateName: "30x"),
+            Rateinfo(imagePrefix: "1", rateName: "40x"),
+            Rateinfo(imagePrefix: "1", rateName: "50x")]
+        addSubview(multipleSwitchView)
+        
+        
+        
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+   
     
     
    
