@@ -66,4 +66,69 @@ struct XCoordinateMagage {
         
         
     }
+    
+    
+    /// 需要移动的距离
+    func moveDistance(scrollView: UIScrollView, lastContentOffset offSet: CGPoint ,rateX: CGFloat, rateY: CGFloat) -> CGPoint {
+        var movePoint: CGPoint = .zero
+        
+        var contentOffsetX = CGFloat()
+        var contentOffsetY = CGFloat()
+        
+        if rateX >= 1 {//放大
+            
+            contentOffsetX = scrollView.contentOffset.x
+            contentOffsetY = scrollView.contentOffset.y
+            let currentCenterPoint = CGPoint(
+                x:contentOffsetX + scrollView.frame.size.width * 0.5,
+                y: contentOffsetY + scrollView.frame.size.height * 0.5)
+            
+            let actualPoint = CGPoint(x: currentCenterPoint.x / scrollView.zoomScale, y: currentCenterPoint.y / scrollView.zoomScale)
+            
+            movePoint.x = actualPoint.x * rateX - actualPoint.x + contentOffsetX
+            movePoint.y = actualPoint.y * rateY - actualPoint.y + contentOffsetY
+            
+        } else {//缩小
+            
+            contentOffsetX = offSet.x
+            contentOffsetY = offSet.y
+            
+            let currentCenterPoint = CGPoint(
+            x:contentOffsetX + scrollView.frame.size.width * 0.5,
+            y: contentOffsetY + scrollView.frame.size.height * 0.5)
+            
+            //转换到小图上的点的坐标
+            let smallPoint = CGPoint(x: currentCenterPoint.x * rateX, y: currentCenterPoint.y * rateY)
+            
+            var moveX = smallPoint.x - scrollView.frame.size.width * 0.5
+            var moveY = smallPoint.y - scrollView.frame.size.height * 0.5
+            
+            if moveX >= scrollView.contentSize.width - scrollView.frame.size.width {
+                moveX = scrollView.contentSize.width - scrollView.frame.size.width
+            } else if moveX <= 0{
+                moveX = 0
+            }
+            
+            if moveY >= scrollView.contentSize.height - scrollView.frame.size.height  {
+                moveY = scrollView.contentSize.height - scrollView.frame.size.height
+            } else if moveY <= 0{
+                moveY = 0
+            }
+            
+            movePoint.x = moveX
+            movePoint.y = moveY
+            
+            
+            
+        }
+        
+        
+        
+        
+        return movePoint
+        
+    }
+    
+    
+    
 }

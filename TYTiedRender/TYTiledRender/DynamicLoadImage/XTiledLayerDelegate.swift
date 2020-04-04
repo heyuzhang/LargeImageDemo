@@ -45,7 +45,7 @@ class XTiledLayerDelegate: NSObject, CALayerDelegate {
             if let imageName = coordinateManage.imageName(in: ctx, use: layer as! CATiledLayer, with:imageNamePrefix),
                 let imageSource = loading.loadingImage(numStr: imageName),
                 let cgSourceImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) {
-                print(imageName,imageNamePrefix ?? "")
+//                print(imageName,imageNamePrefix ?? "")
                 let image = UIImage(cgImage: cgSourceImage)
                 UIGraphicsPushContext(ctx)
                 image.draw(in: bounds)

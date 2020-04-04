@@ -12,6 +12,7 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     
     //默认，也可以改变
     var titleSize: CGSize = CGSize(width: 256, height: 256)
+
     
     ///宽方向切图的数量
     var widthNumber:Int = 0 {
@@ -58,6 +59,37 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     var netImageURLStrs: [String]?
     
     
+    lazy var coordinateManage: XCoordinateMagage = XCoordinateMagage()
+   
+    ///X方向的缩放比例
+    var rateX: CGFloat = CGFloat()
+    ///y方向的缩放比例
+    var rateY: CGFloat = CGFloat()
+    
+    ///scrollView当前的偏距
+    private var currentOffset: CGPoint = .zero
+    ///当前倍率索引
+    private var currentIndex: Int = 0 {
+        willSet {
+            
+            currentOffset = scrollView.contentOffset
+            let rateInfo = self.multipleSwitchView.multiples[newValue]
+            let newImageSize = CGSize(width:  CGFloat(rateInfo.heightNumber) * titleSize.width, height: CGFloat(rateInfo.widthNumber ) * titleSize.height)
+            rateX = newImageSize.width / imagePixel.width
+            rateY = newImageSize.height / imagePixel.height
+        }
+        
+        didSet {
+            let rateInfo = self.multipleSwitchView.multiples[currentIndex]
+            self.widthNumber = rateInfo.widthNumber
+            self.heightNumber = rateInfo.heightNumber
+            self.imageNamePrefix = rateInfo.imagePrefix
+            moveScroll()
+            
+            
+        }
+    }
+    
     ///倍率切换view
     lazy var multipleSwitchView: XMultipleSwitchView = XMultipleSwitchView()
     
@@ -92,18 +124,7 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
            fatalError("init(coder:) has not been implemented")
        }
     
-    private var currentIndex: Int = 0 {
-        willSet {
-            
-        }
-        
-        didSet {
-            let rateInfo = self.multipleSwitchView.multiples[currentIndex]
-            self.widthNumber = rateInfo.widthNumber
-            self.heightNumber = rateInfo.heightNumber
-            self.imageNamePrefix = rateInfo.imagePrefix
-        }
-    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         scrollView.frame = bounds
@@ -123,7 +144,7 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     private func setupUI() {
         scrollView.delegate = self
         scrollView.maximumZoomScale = 200
-        scrollView.minimumZoomScale = 1
+        scrollView.minimumZoomScale = 0.01
         if #available(iOS 13.0, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
         } else {
@@ -164,14 +185,22 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        print("scrollContentOffset:\(scrollView.contentOffset)")
-        print("缩放比例：\(scrollView.zoomScale)")
+//        print("scrollContentOffset:\(scrollView.contentOffset)")
+//        print("缩放比例：\(scrollView.zoomScale)")
     }
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }
     
+    
+    
+    func moveScroll() {
+        
+        let moveDistance: CGPoint = coordinateManage.moveDistance(scrollView: scrollView, lastContentOffset: currentOffset, rateX: rateX, rateY: rateY)
+        scrollView.contentOffset = moveDistance
+        
+    }
     
 
 }
