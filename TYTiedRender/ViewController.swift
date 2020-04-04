@@ -21,9 +21,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
          super.viewDidLoad()
 //        view.backgroundColor = .white
-        dymamicLoadImage.imageNamePrefix = "5"
-        dymamicLoadImage.widthNumber = 5
-        dymamicLoadImage.heightNumber = 5
+//        dymamicLoadImage.imageNamePrefix = "4"
+//        dymamicLoadImage.widthNumber = 11
+//        dymamicLoadImage.heightNumber = 12
         view.addSubview(dymamicLoadImage)
     }
     
