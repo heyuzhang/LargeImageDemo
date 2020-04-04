@@ -2,7 +2,7 @@
 //  XDynamicLoadImage.swift
 //  TYTiedRender
 //
-//  Created by 吴新 on 2020/3/28.
+//  Created by zhangheyu on 2020/3/28.
 //  Copyright © 2020 DoMobile21. All rights reserved.
 //
 
@@ -13,13 +13,26 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     //默认，也可以改变
     var titleSize: CGSize = CGSize(width: 256, height: 256)
     
-    //大图的像素 可根据网络加载回来的图片计算出来，然后赋值即可
-    var imagePixel: CGSize = CGSize(width: 33 * 256, height: 31 * 256)  {
+    ///宽方向切图的数量
+    var widthNumber:Int = 5 {
+        didSet {
+            imagePixel = CGSize(width:  CGFloat(widthNumber) * titleSize.width, height: CGFloat(heightNumber) * titleSize.height)
+        }
+    }
+    ///高方向切图的数量
+    var heightNumber:Int = 5 {
+       didSet {
+           imagePixel = CGSize(width:  CGFloat(widthNumber) * titleSize.width, height: CGFloat(heightNumber) * titleSize.height)
+       }
+    }
+    //大图的像素 可根据网络加载回来的图片计算出来，然后赋值
+    var imagePixel: CGSize = .zero {
         didSet {
             if tiledLayer != nil {
                 scrollView.contentSize = imagePixel
                 tiledLayer?.frame = CGRect(x: 0, y: 0, width: imagePixel.width, height: imagePixel.height)
                 imageView.frame = CGRect(x: 0, y: 0, width: imagePixel.width, height: imagePixel.height)
+                tiledLayerDelegate.imageNamePrefix = imageNamePrefix
                 tiledLayer?.setNeedsDisplay()
 
             }
@@ -40,6 +53,10 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     var netImages: [UIImage]?
     //网络图片给的是url，也需要另处理
     var netImageURLStrs: [String]?
+    
+    
+    ///倍率切换view
+    lazy var multipleSwitchView: XMultipleSwitchView = XMultipleSwitchView()
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -68,17 +85,25 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         
     }
     
+    required init?(coder: NSCoder) {
+           fatalError("init(coder:) has not been implemented")
+       }
+    
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         scrollView.frame = bounds
+        multipleSwitchView.frame = CGRect(x: 0, y: bounds.size.height - 50, width: bounds.size.width, height: 50)
+        tiledLayer?.setNeedsDisplay()
         
     }
     
     private var tiledLayerDelegate: XTiledLayerDelegate = XTiledLayerDelegate()
+   
     private func setupUI() {
         scrollView.delegate = self
-        scrollView.maximumZoomScale = 5
-        scrollView.minimumZoomScale = 1
+        scrollView.maximumZoomScale = 200
+        scrollView.minimumZoomScale = 0.5
         addSubview(scrollView)
         scrollView.addSubview(imageView)
         
@@ -91,11 +116,32 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         scrollView.contentSize = tiledLayer.frame.size
 
         tiledLayer.setNeedsDisplay()
+        
+        //倍率切换
+        multipleSwitchView.backgroundColor = UIColor.init(white: 0, alpha: 0.1)
+        
+        multipleSwitchView.multiples = [
+            Rateinfo(imagePrefix: "5", rateName: "1x",widthNumber: 6, heightNumber: 6),
+            Rateinfo(imagePrefix: "4", rateName: "5x",widthNumber: 11, heightNumber: 12),
+            Rateinfo(imagePrefix: "3", rateName: "10x",widthNumber: 22, heightNumber: 24),
+            Rateinfo(imagePrefix: "4", rateName: "20x",widthNumber: 44, heightNumber: 47),
+            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 88, heightNumber: 94),
+//            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 86, heightNumber: 92)
+        ]
+        multipleSwitchView.buttonClickBlock = { index in
+            let rateInfo = self.multipleSwitchView.multiples[index]
+            self.widthNumber = rateInfo.widthNumber
+            self.heightNumber = rateInfo.heightNumber
+            self.imageNamePrefix = rateInfo.imagePrefix
+        }
+        
+        addSubview(multipleSwitchView)
+        
+        
+        
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+   
     
     
    
