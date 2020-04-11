@@ -58,12 +58,8 @@ struct XCoordinateMagage {
         
         sliceImageIndex = xIndex + yIndex
         
-        
-        
         let newPointT = CGPoint(x: x, y: y)
-        
         newPoint = sourceView.convert(newPointT, to: aimView)
-        
         
     }
     
@@ -118,12 +114,7 @@ struct XCoordinateMagage {
             movePoint.x = moveX
             movePoint.y = moveY
             
-            
-            
         }
-        
-        
-        
         
         return movePoint
         
