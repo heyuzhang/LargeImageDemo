@@ -167,6 +167,8 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         imageView.frame = tiledLayer.bounds
         scrollView.contentSize = tiledLayer.frame.size
 
+        FileManager;
+        
         tiledLayer.setNeedsDisplay()
         
         //倍率切换
