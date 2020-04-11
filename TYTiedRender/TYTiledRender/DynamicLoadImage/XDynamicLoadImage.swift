@@ -17,22 +17,26 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     ///宽方向切图的数量
     var widthNumber:Int = 0 {
         didSet {
-            imagePixel = CGSize(width:  CGFloat(heightNumber) * titleSize.width, height: CGFloat(widthNumber ) * titleSize.height)
+//            imagePixel = CGSize(width:  CGFloat(heightNumber) * titleSize.width, height: CGFloat(widthNumber ) * titleSize.height)
+            imagePixel = CGSize(width:  CGFloat(heightNumber) * titleSize.width * scrollView.zoomScale, height: CGFloat(widthNumber ) * titleSize.height * scrollView.zoomScale)
 
         }
     }
     ///高方向切图的数量
     var heightNumber:Int = 0 {
        didSet {
-        imagePixel = CGSize(width:  CGFloat(heightNumber ) * titleSize.width, height: CGFloat(widthNumber) * titleSize.height)
+//        imagePixel = CGSize(width:  CGFloat(heightNumber ) * titleSize.width, height: CGFloat(widthNumber) * titleSize.height)
 
+        imagePixel = CGSize(width:  CGFloat(heightNumber ) * titleSize.width * scrollView.zoomScale , height: CGFloat(widthNumber) * titleSize.height * scrollView.zoomScale)
+
+        
        }
     }
     //大图的像素 可根据网络加载回来的图片计算出来，然后赋值
     var imagePixel: CGSize = .zero {
         didSet {
             if tiledLayer != nil {
-                scrollView.zoomScale = 1
+//                scrollView.zoomScale = 1
                 scrollView.contentSize = imagePixel
                 tiledLayer?.frame = CGRect(x: 0, y: 0, width: imagePixel.width, height: imagePixel.height)
                 imageView.frame = CGRect(x: 0, y: 0, width: imagePixel.width, height: imagePixel.height)
@@ -74,12 +78,14 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
             
             currentOffset = scrollView.contentOffset
             let rateInfo = self.multipleSwitchView.multiples[newValue]
-            let newImageSize = CGSize(width:  CGFloat(rateInfo.heightNumber) * titleSize.width, height: CGFloat(rateInfo.widthNumber ) * titleSize.height)
-            rateX = newImageSize.width / imagePixel.width
-            rateY = newImageSize.height / imagePixel.height
+            let newImageSize = CGSize(width:  CGFloat(rateInfo.heightNumber) * titleSize.width * scrollView.zoomScale, height: CGFloat(rateInfo.widthNumber ) * titleSize.height * scrollView.zoomScale)
+            
+            rateX = newImageSize.width / scrollView.contentSize.width
+            rateY = newImageSize.height / scrollView.contentSize.width
         }
         
         didSet {
+           
             let rateInfo = self.multipleSwitchView.multiples[currentIndex]
             self.widthNumber = rateInfo.widthNumber
             self.heightNumber = rateInfo.heightNumber
@@ -144,7 +150,7 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     private func setupUI() {
         scrollView.delegate = self
         scrollView.maximumZoomScale = 200
-        scrollView.minimumZoomScale = 0.01
+        scrollView.minimumZoomScale = 1
         if #available(iOS 13.0, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
         } else {
@@ -185,21 +191,32 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
-//        print("scrollContentOffset:\(scrollView.contentOffset)")
-//        print("缩放比例：\(scrollView.zoomScale)")
+        
     }
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return imageView
     }
     
+    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        
+        print(scrollView.contentSize)
+        
+    }
     
     
     func moveScroll() {
         
         let moveDistance: CGPoint = coordinateManage.moveDistance(scrollView: scrollView, lastContentOffset: currentOffset, rateX: rateX, rateY: rateY)
-        scrollView.contentOffset = moveDistance
+//        scrollView.zoomScale = 1
+//        scrollView.contentSize = imagePixel
         
+        let rateInfo = self.multipleSwitchView.multiples[currentIndex]
+        self.widthNumber = rateInfo.widthNumber
+        self.heightNumber = rateInfo.heightNumber
+        self.imageNamePrefix = rateInfo.imagePrefix
+        
+        scrollView.contentOffset = moveDistance
     }
     
 

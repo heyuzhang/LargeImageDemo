@@ -38,8 +38,15 @@ class XMultipleSwitchView: UIView {
     ///点击的按钮数组
     private lazy var buttons: [UIButton] = []
     
+    private var reClick = false
     private var currentIndex: Int = 0 {
         willSet {
+            
+            if currentIndex == newValue { //重复点击
+                reClick = true
+                return
+            }
+            reClick = false
             let button = buttons[currentIndex]
             button.isSelected = false
             button.backgroundColor = viewAttributes.butttonNormalBgColor
@@ -142,8 +149,10 @@ extension XMultipleSwitchView {
     @objc private func buttonAction(_ sender: UIButton) {
         
         currentIndex = sender.tag
-        if let block = buttonClickBlock {
-            block(currentIndex)
+        if !reClick {
+            if let block = buttonClickBlock {
+                block(currentIndex)
+            }            
         }
         
     }
