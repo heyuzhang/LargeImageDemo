@@ -17,29 +17,26 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     ///宽方向切图的数量
     var widthNumber:Int = 0 {
         didSet {
-//            imagePixel = CGSize(width:  CGFloat(heightNumber) * titleSize.width, height: CGFloat(widthNumber ) * titleSize.height)
-            imagePixel = CGSize(width:  CGFloat(heightNumber) * titleSize.width * scrollView.zoomScale, height: CGFloat(widthNumber ) * titleSize.height * scrollView.zoomScale)
+            
+             imagePixel = CGSize(width:  CGFloat(heightNumber) * titleSize.width * scrollView.zoomScale, height: CGFloat(widthNumber ) * titleSize.height * scrollView.zoomScale)
 
         }
     }
+    
     ///高方向切图的数量
     var heightNumber:Int = 0 {
        didSet {
-//        imagePixel = CGSize(width:  CGFloat(heightNumber ) * titleSize.width, height: CGFloat(widthNumber) * titleSize.height)
-
         imagePixel = CGSize(width:  CGFloat(heightNumber ) * titleSize.width * scrollView.zoomScale , height: CGFloat(widthNumber) * titleSize.height * scrollView.zoomScale)
 
-        
        }
     }
     //大图的像素 可根据网络加载回来的图片计算出来，然后赋值
     var imagePixel: CGSize = .zero {
         didSet {
             if tiledLayer != nil {
-//                scrollView.zoomScale = 1
                 scrollView.contentSize = imagePixel
-                tiledLayer?.frame = CGRect(x: 0, y: 0, width: imagePixel.width, height: imagePixel.height)
                 imageView.frame = CGRect(x: 0, y: 0, width: imagePixel.width, height: imagePixel.height)
+                tiledLayer?.frame = CGRect(x: 0, y: 0, width: imagePixel.width, height: imagePixel.height)
                 tiledLayerDelegate.imageNamePrefix = imageNamePrefix
                 tiledLayer?.setNeedsDisplay()
 
@@ -79,7 +76,7 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
             currentOffset = scrollView.contentOffset
             let rateInfo = self.multipleSwitchView.multiples[newValue]
             let newImageSize = CGSize(width:  CGFloat(rateInfo.heightNumber) * titleSize.width * scrollView.zoomScale, height: CGFloat(rateInfo.widthNumber ) * titleSize.height * scrollView.zoomScale)
-            
+
             rateX = newImageSize.width / scrollView.contentSize.width
             rateY = newImageSize.height / scrollView.contentSize.width
         }
@@ -137,20 +134,20 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         multipleSwitchView.frame = CGRect(x: 0, y: bounds.size.height - 50, width: bounds.size.width, height: 50)
         if  multipleSwitchView.multiples.count != 0  {
             let defaultRateInfo = multipleSwitchView.multiples[currentIndex]
-             heightNumber = defaultRateInfo.widthNumber
-             widthNumber = defaultRateInfo.heightNumber
+             heightNumber = defaultRateInfo.heightNumber
+             widthNumber = defaultRateInfo.widthNumber
             imageNamePrefix = defaultRateInfo.imagePrefix
         }
         tiledLayer?.setNeedsDisplay()
-        
     }
     
     private var tiledLayerDelegate: XTiledLayerDelegate = XTiledLayerDelegate()
    
     private func setupUI() {
         scrollView.delegate = self
-        scrollView.maximumZoomScale = 200
-        scrollView.minimumZoomScale = 1
+        scrollView.maximumZoomScale = 1000
+        scrollView.minimumZoomScale = 0.2
+        
         if #available(iOS 13.0, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
         } else {
@@ -176,14 +173,15 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         multipleSwitchView.backgroundColor = UIColor.init(white: 0, alpha: 0.1)
         
         multipleSwitchView.multiples = [
-            Rateinfo(imagePrefix: "5", rateName: "1x",widthNumber: 6, heightNumber: 6),
-            Rateinfo(imagePrefix: "4", rateName: "5x",widthNumber: 11, heightNumber: 12),
-//            Rateinfo(imagePrefix: "3", rateName: "10x",widthNumber: 22, heightNumber: 24),
-//            Rateinfo(imagePrefix: "4", rateName: "20x",widthNumber: 44, heightNumber: 47),
+            Rateinfo(imagePrefix: "5", rateName: "1x",widthNumber: 6, heightNumber: 6),//5 6 6
+            Rateinfo(imagePrefix: "4", rateName: "5x",widthNumber: 11, heightNumber: 12),//4 11 12
+            Rateinfo(imagePrefix: "3", rateName: "10x",widthNumber: 22, heightNumber: 24),//3 22 24
+            Rateinfo(imagePrefix: "2", rateName: "20x",widthNumber: 44, heightNumber: 47),//2 44 47
 //            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 88, heightNumber: 94),
 //            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 86, heightNumber: 92)
         ]
         multipleSwitchView.buttonClickBlock = { index in
+            self.scrollView.setZoomScale(1, animated: false)
             self.currentIndex = index
         }
         
@@ -198,25 +196,39 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         return imageView
     }
     
+    private var lastContentSize: CGSize = .zero
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
         
-        print(scrollView.contentSize)
+        let contentSize = scrollView.contentSize
+        
+        if lastContentSize.width > contentSize.width {//缩小
+            if currentIndex != 0 {
+                let nextRateinfo = multipleSwitchView.multiples[currentIndex - 1]
+                let imagePixel = CGSize(width:  CGFloat(nextRateinfo.heightNumber ) * titleSize.width , height: CGFloat(nextRateinfo.widthNumber) * titleSize.height)
+                if contentSize.width < imagePixel.width {//缩小切换
+                    multipleSwitchView.clickButton(with: currentIndex - 1)
+                }
+            }
+        } else {//放大
+            if currentIndex != multipleSwitchView.multiples.count - 1 {
+                let nextRateinfo = multipleSwitchView.multiples[currentIndex + 1]
+                let imagePixel = CGSize(width:  CGFloat(nextRateinfo.heightNumber ) * titleSize.width , height: CGFloat(nextRateinfo.widthNumber) * titleSize.height)
+                if contentSize.width >= imagePixel.width {//放大切换
+                    multipleSwitchView.clickButton(with: currentIndex + 1)
+                }
+            }
+        }
+        
+        lastContentSize = scrollView.contentSize
+
         
     }
     
-    
-    func moveScroll() {
+    private func moveScroll() {
         
         let moveDistance: CGPoint = coordinateManage.moveDistance(scrollView: scrollView, lastContentOffset: currentOffset, rateX: rateX, rateY: rateY)
-//        scrollView.zoomScale = 1
-//        scrollView.contentSize = imagePixel
-        
-        let rateInfo = self.multipleSwitchView.multiples[currentIndex]
-        self.widthNumber = rateInfo.widthNumber
-        self.heightNumber = rateInfo.heightNumber
-        self.imageNamePrefix = rateInfo.imagePrefix
-        
         scrollView.contentOffset = moveDistance
+        
     }
     
 

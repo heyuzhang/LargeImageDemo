@@ -99,8 +99,11 @@ class XMultipleSwitchView: UIView {
         
         scrollView.contentSize = CGSize(width: contentW, height: 0)
         
-        
     }
+    
+    public func clickButton(with index: NSInteger) {
+          buttonAction(buttons[index])
+      }
 }
 
 //初始化UI
@@ -152,10 +155,13 @@ extension XMultipleSwitchView {
         if !reClick {
             if let block = buttonClickBlock {
                 block(currentIndex)
-            }            
+            }
         }
         
     }
+    
+  
+    
     
 }
 

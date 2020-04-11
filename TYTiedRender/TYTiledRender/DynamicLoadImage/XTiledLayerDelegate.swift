@@ -39,9 +39,6 @@ class XTiledLayerDelegate: NSObject, CALayerDelegate {
             
             
         } else {
-            
-            
-            
             if let imageName = coordinateManage.imageName(in: ctx, use: layer as! CATiledLayer, with:imageNamePrefix),
                 let imageSource = loading.loadingImage(numStr: imageName),
                 let cgSourceImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) {

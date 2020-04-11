@@ -81,8 +81,8 @@ struct XCoordinateMagage {
             
             let actualPoint = currentCenterPoint;//CGPoint(x: currentCenterPoint.x / scrollView.zoomScale, y: currentCenterPoint.y / scrollView.zoomScale)
             
-            movePoint.x = actualPoint.x * rateX - actualPoint.x + contentOffsetX
-            movePoint.y = actualPoint.y * rateY - actualPoint.y + contentOffsetY
+            movePoint.x = actualPoint.x * rateX - scrollView.frame.size.width * 0.5
+            movePoint.y = actualPoint.y * rateY - scrollView.frame.size.height * 0.5
             
         } else {//缩小
             

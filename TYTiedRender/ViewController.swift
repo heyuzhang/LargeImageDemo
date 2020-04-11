@@ -20,13 +20,12 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
          super.viewDidLoad()
-//        view.backgroundColor = .white
-//        dymamicLoadImage.imageNamePrefix = "4"
-//        dymamicLoadImage.widthNumber = 11
-//        dymamicLoadImage.heightNumber = 12
         view.addSubview(dymamicLoadImage)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
