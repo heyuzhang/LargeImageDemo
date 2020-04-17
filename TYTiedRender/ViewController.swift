@@ -8,6 +8,7 @@
 
 import UIKit
 
+@available(iOS 13.0, *)
 class ViewController: UIViewController {
 
    lazy var viewPort = XImageView()
@@ -20,11 +21,12 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
          super.viewDidLoad()
-//        view.backgroundColor = .white
-        dymamicLoadImage.imageNamePrefix = "1"
         view.addSubview(dymamicLoadImage)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()

@@ -2,7 +2,8 @@
 //  XMultipleSwitchView.swift
 //  TYTiedRender
 //
-//  Created by hulianxin1 on 2020/4/2.
+
+//  Created by zhangheyu on 2020/4/2.
 //  Copyright © 2020 DoMobile21. All rights reserved.
 //
 
@@ -13,6 +14,10 @@ struct Rateinfo {
     var imagePrefix: String
     ///该倍率的名称 eg: 30x
     var rateName: String
+
+    ///
+    var widthNumber:Int
+    var heightNumber:Int
 }
 
 class XMultipleSwitchView: UIView {
@@ -24,18 +29,29 @@ class XMultipleSwitchView: UIView {
         }
     }
     
+
+    var buttonClickBlock:((Int)->())?
    
     
     lazy var viewAttributes: XMultipleSwitchViewAttributes = XMultipleSwitchViewAttributes()
     
-    ///赔率多的时候,可以滑动
+
+    ///倍率多的时候,可以滑动
     private lazy var scrollView = UIScrollView()
     
     ///点击的按钮数组
     private lazy var buttons: [UIButton] = []
     
+
+    private var reClick = false
     private var currentIndex: Int = 0 {
         willSet {
+            
+            if currentIndex == newValue { //重复点击
+                reClick = true
+                return
+            }
+            reClick = false
             let button = buttons[currentIndex]
             button.isSelected = false
             button.backgroundColor = viewAttributes.butttonNormalBgColor
@@ -87,9 +103,11 @@ class XMultipleSwitchView: UIView {
         let contentW = viewAttributes.buttonSize.width * CGFloat(buttons.count) + viewAttributes.buttonsMarge * CGFloat((buttons.count - 1))
         
         scrollView.contentSize = CGSize(width: contentW, height: 0)
-        
-        
     }
+    
+    public func clickButton(with index: NSInteger) {
+          buttonAction(buttons[index])
+      }
 }
 
 //初始化UI
@@ -138,9 +156,14 @@ extension XMultipleSwitchView {
     @objc private func buttonAction(_ sender: UIButton) {
         
         currentIndex = sender.tag
+
+        if !reClick {
+            if let block = buttonClickBlock {
+                block(currentIndex)
+            }
+        }
         
     }
-    
 }
 
 extension UIView {

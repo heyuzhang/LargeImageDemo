@@ -2,7 +2,7 @@
 //  XTiledLayerDelegate.swift
 //  TYTiedRender
 //
-//  Created by 吴新 on 2020/3/28.
+//  Created by zhangheyu on 2020/3/20.
 //  Copyright © 2020 DoMobile21. All rights reserved.
 //
 
@@ -39,10 +39,10 @@ class XTiledLayerDelegate: NSObject, CALayerDelegate {
             
             
         } else {
-            
             if let imageName = coordinateManage.imageName(in: ctx, use: layer as! CATiledLayer, with:imageNamePrefix),
                 let imageSource = loading.loadingImage(numStr: imageName),
                 let cgSourceImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) {
+//                print(imageName,imageNamePrefix ?? "")
                 let image = UIImage(cgImage: cgSourceImage)
                 UIGraphicsPushContext(ctx)
                 image.draw(in: bounds)
