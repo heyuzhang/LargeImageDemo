@@ -33,6 +33,9 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     
     ///绘制按钮
     private var enterDrawBtn: UIButton!
+    ///撤销按钮
+    private var cancelBtn: UIButton!
+    
     ///绘图layer
     private lazy var shapelayer: CAShapeLayer = {
         var shape = CAShapeLayer()
@@ -46,6 +49,7 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     private var bezierPath: UIBezierPath = UIBezierPath()
     ///绘制手势pan
     private var panGesture: UIPanGestureRecognizer!
+    
     ///所有的绘制点
     ///Int:表示在哪个倍率下
     ///[[CGPoint]]:表示连续的标注,第一个点代表起始点,其他点代表绘制的点
@@ -53,12 +57,15 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     ///正在绘制过程中的点
     private var drawingPoint: [CGPoint] = []
     
+    private var drawView: XCustomView = XCustomView()
+    
     //大图的像素 可根据网络加载回来的图片计算出来，然后赋值
     var imagePixel: CGSize = .zero {
         didSet {
             if tiledLayer != nil {
                 scrollView.contentSize = imagePixel
                 imageView.frame = CGRect(x: 0, y: 0, width: imagePixel.width, height: imagePixel.height)
+                drawView.frame = imageView.bounds
                 tiledLayer?.frame = CGRect(x: 0, y: 0, width: imagePixel.width, height: imagePixel.height)
                 tiledLayerDelegate.imageNamePrefix = imageNamePrefix
                 tiledLayer?.setNeedsDisplay()
@@ -165,11 +172,19 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         enterDrawBtn.frame = CGRect(x: 0, y: (bounds.size.height - 50) * 0.5, width: 50, height: 50)
         enterDrawBtn.layer.cornerRadius = 25
         enterDrawBtn.layer.masksToBounds = true
+        
+        cancelBtn.frame = CGRect(x: 0, y: (bounds.size.height - 50) * 0.5 + 100, width: 50, height: 50)
+        cancelBtn.layer.cornerRadius = 25
+        cancelBtn.layer.masksToBounds = true
+        
+        
     }
     
     private var tiledLayerDelegate: XTiledLayerDelegate = XTiledLayerDelegate()
    
     private func setupUI() {
+        
+       
         
         scrollView.delegate = self
         scrollView.maximumZoomScale = 1000
@@ -203,18 +218,21 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
 
             Rateinfo(imagePrefix: "5", rateName: "1x",widthNumber: 6, heightNumber: 6),
             Rateinfo(imagePrefix: "4", rateName: "5x",widthNumber: 11, heightNumber: 12),
-            Rateinfo(imagePrefix: "3", rateName: "10x",widthNumber: 22, heightNumber: 24),
-            Rateinfo(imagePrefix: "2", rateName: "20x",widthNumber: 44, heightNumber: 47),
+//            Rateinfo(imagePrefix: "3", rateName: "10x",widthNumber: 22, heightNumber: 24),
+//            Rateinfo(imagePrefix: "2", rateName: "20x",widthNumber: 44, heightNumber: 47),
 //            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 88, heightNumber: 94),
 //            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 86, heightNumber: 92)
         ]
         multipleSwitchView.buttonClickBlock = { index in
             self.scrollView.setZoomScale(1, animated: false)
             self.currentIndex = index
+            self.drawView.currentIndex = index
         }
         
         addSubview(multipleSwitchView)
-        
+        drawView.multipleSwitchView = multipleSwitchView
+        imageView.addSubview(drawView)
+        drawView.backgroundColor = UIColor.clear
         
         //绘制按钮
         enterDrawBtn = UIButton(type: .custom)
@@ -226,10 +244,29 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         enterDrawBtn.addTarget(self, action: #selector(drawAction(_:)), for: .touchUpInside)
         addSubview(enterDrawBtn)
         
+        //绘制按钮
+        cancelBtn = UIButton(type: .custom)
+        cancelBtn.setTitle("撤销", for: .normal)
+        cancelBtn.setTitleColor(.white, for: .normal)
+        cancelBtn.setTitleColor(.white, for: .selected)
+        cancelBtn.backgroundColor = .lightGray
+        cancelBtn.addTarget(self, action: #selector(cancelDrawAction(_:)), for: .touchUpInside)
+        addSubview(cancelBtn)
+        
+        
         //添加pan手势
         let pan = UIPanGestureRecognizer(target: self, action: #selector(panGestureAction(_:)))
         panGesture = pan
-        imageView.layer.addSublayer(shapelayer)
+        
+        //获取标注数据
+        if let dic = NSMutableDictionary(contentsOfFile: filePath()) {
+            allPoints = dic as! [Int : [[CGPoint]]]
+        }
+        
+        drawView.allPoints = allPoints
+        drawView.setNeedsDisplay()
+        
+        
     }
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -280,15 +317,36 @@ extension XDynamicLoadImage {
         sender.isSelected = !sender.isSelected
         if sender.isSelected {
             scrollView.isScrollEnabled = false
-            imageView.addGestureRecognizer(panGesture)
+            drawView.addGestureRecognizer(panGesture)
         } else {
-            imageView.removeGestureRecognizer(panGesture)
+            drawView.removeGestureRecognizer(panGesture)
             scrollView.isScrollEnabled = true
+            //保存标注
+            if !FileManager.default.isExecutableFile(atPath: filePath()) {//文件存在
+                let result = FileManager.default.createFile(atPath: filePath(), contents: nil, attributes: nil)
+                if result {
+                    print("创建失败")
+                }
+            }
+            
+           let dic = NSDictionary(dictionary: allPoints)//allPoints as! NSMutableDictionary
+           let result = dic.write(toFile: filePath(), atomically: true)
+            if result {
+                print("保存成功")
+            }
+            
         }
     }
     
+    func filePath() -> String {
+        let docPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
+        let filePath = docPath.appendingPathComponent("data.plist")
+        
+        return filePath
+    }
+    
     @objc func panGestureAction(_ pan: UIPanGestureRecognizer) {
-        let startPoint = pan.location(in: imageView)
+        let startPoint = pan.location(in: drawView)
         var points = allPoints[currentIndex]
         if points == nil {
             points = [[]]
@@ -299,34 +357,33 @@ extension XDynamicLoadImage {
             bezierPath.move(to: startPoint)
             break
         case .changed:
-            let movePoint = pan.location(in: imageView)
-            bezierPath.addLine(to: movePoint)
-            shapelayer.path = bezierPath.cgPath
+            let movePoint = pan.location(in: drawView)
             drawingPoint.append(movePoint)
+            points?.append(drawingPoint)
+            allPoints[currentIndex] = points
+            drawView.allPoints = allPoints
+            drawView.setNeedsDisplay()
             break
         case .ended:
             
-            points?.append(drawingPoint)
             drawingPoint.removeAll()
             break
         case .cancelled:
             
-            points?.append(drawingPoint)
             drawingPoint.removeAll()
             break
             
         default: break
             
         }
-        
-        allPoints[currentIndex] = points
-        
     }
     
     //切换倍率的时候重新绘制
     func reDrawPath() {
-        bezierPath.removeAllPoints()
         
+        return
+        bezierPath.removeAllPoints()
+    
         for (key, value) in allPoints {//遍历字典
             for (_, points) in value.enumerated() {//遍历绘制的图形
                 for (index, point) in points.enumerated() {
@@ -358,4 +415,26 @@ extension XDynamicLoadImage {
         
         shapelayer.path = bezierPath.cgPath
     }
+    
+    @objc func cancelDrawAction(_ sender: UIButton) {
+        var tempAllPoint: [Int: [[CGPoint]]] = [:]
+        var tempValue:[[CGPoint]] = []
+        for (key, var value) in allPoints {//遍历字典
+            print(value.count)
+            if key == currentIndex {//撤销当前倍率下的绘制
+                tempAllPoint = allPoints
+                if value.count > 0 {
+                    value.removeLast()
+                    tempValue = value
+                    tempAllPoint[key] = tempValue
+                    drawView.allPoints = tempAllPoint
+                    drawView.setNeedsDisplay()
+                    allPoints = tempAllPoint
+                }
+                break
+            }
+
+        }
+    }
+    
 }

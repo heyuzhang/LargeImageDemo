@@ -14,6 +14,7 @@
 		17205F1420172C1F00E9379A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 17205F1220172C1F00E9379A /* LaunchScreen.storyboard */; };
 		1C7A33B4242F2A3A0036FA0C /* XDynamicLoadImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C7A33B3242F2A3A0036FA0C /* XDynamicLoadImage.swift */; };
 		1C7A3459242F3CFB0036FA0C /* XTiledLayerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C7A3458242F3CFB0036FA0C /* XTiledLayerDelegate.swift */; };
+		5C3241E624669D0D00ACDF19 /* XCustomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C3241E524669D0D00ACDF19 /* XCustomView.swift */; };
 		5C5327952435E03B00A85C4C /* XMultipleSwitchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5327942435E03B00A85C4C /* XMultipleSwitchView.swift */; };
 		5C5327972435E4BE00A85C4C /* XMultipleSwitchViewAttributes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C5327962435E4BE00A85C4C /* XMultipleSwitchViewAttributes.swift */; };
 		C443BD032413D77400C1A693 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C443BCEB2413D77300C1A693 /* ImageCache.swift */; };
@@ -56,6 +57,7 @@
 		17205F1520172C1F00E9379A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C7A33B3242F2A3A0036FA0C /* XDynamicLoadImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XDynamicLoadImage.swift; sourceTree = "<group>"; };
 		1C7A3458242F3CFB0036FA0C /* XTiledLayerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XTiledLayerDelegate.swift; sourceTree = "<group>"; };
+		5C3241E524669D0D00ACDF19 /* XCustomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XCustomView.swift; sourceTree = "<group>"; };
 		5C5327942435E03B00A85C4C /* XMultipleSwitchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMultipleSwitchView.swift; sourceTree = "<group>"; };
 		5C5327962435E4BE00A85C4C /* XMultipleSwitchViewAttributes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XMultipleSwitchViewAttributes.swift; sourceTree = "<group>"; };
 		C443BCEB2413D77300C1A693 /* ImageCache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageCache.swift; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				1C7A33B3242F2A3A0036FA0C /* XDynamicLoadImage.swift */,
+				5C3241E524669D0D00ACDF19 /* XCustomView.swift */,
 				1C7A3458242F3CFB0036FA0C /* XTiledLayerDelegate.swift */,
 				5C5327982435E4C600A85C4C /* MultipleSwitchView */,
 			);
@@ -290,6 +293,7 @@
 				C443BD0E2413D77400C1A693 /* Box.swift in Sources */,
 				5C5327972435E4BE00A85C4C /* XMultipleSwitchViewAttributes.swift in Sources */,
 				C443BD192413D77400C1A693 /* ImagePrefetcher.swift in Sources */,
+				5C3241E624669D0D00ACDF19 /* XCustomView.swift in Sources */,
 				C443BD0A2413D77400C1A693 /* CacheSerializer.swift in Sources */,
 				C443BD0D2413D77400C1A693 /* ImageDownloader.swift in Sources */,
 				C443BD072413D77400C1A693 /* ImageView+Kingfisher.swift in Sources */,

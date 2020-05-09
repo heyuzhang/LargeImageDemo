@@ -19,7 +19,8 @@ struct XCoordinateMagage {
     
     //返回格式是 00_00
     func imageName(in context: CGContext, use tiledLayer: CATiledLayer, with prefix: String?) -> String? {
-            
+        
+        
         let bounds = context.boundingBoxOfClipPath
         let x = Int(floorf(Float(bounds.origin.x / tiledLayer.tileSize.width)))
         let y = Int(floorf(Float(bounds.origin.y / tiledLayer.tileSize.height)))
