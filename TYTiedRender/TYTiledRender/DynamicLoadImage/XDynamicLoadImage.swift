@@ -49,13 +49,13 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     private var bezierPath: UIBezierPath = UIBezierPath()
     ///绘制手势pan
     private var panGesture: UIPanGestureRecognizer!
-    
+
     ///所有的绘制点
     ///Int:表示在哪个倍率下
     ///[[CGPoint]]:表示连续的标注,第一个点代表起始点,其他点代表绘制的点
-    private var allPoints: [Int: [[CGPoint]]] = [:]
+    private var allPoints: [String: [[[CGFloat]]]] = [:]
     ///正在绘制过程中的点
-    private var drawingPoint: [CGPoint] = []
+    private var drawingPoint: [[CGFloat]] = []
     
     private var drawView: XCustomView = XCustomView()
     
@@ -117,7 +117,6 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
             self.heightNumber = rateInfo.heightNumber
             self.imageNamePrefix = rateInfo.imagePrefix
             moveScroll()
-            reDrawPath()
             
         }
     }
@@ -260,7 +259,7 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         
         //获取标注数据
         if let dic = NSMutableDictionary(contentsOfFile: filePath()) {
-            allPoints = dic as! [Int : [[CGPoint]]]
+            allPoints = dic as! [String : [[[CGFloat]]]]
         }
         
         drawView.allPoints = allPoints
@@ -321,20 +320,12 @@ extension XDynamicLoadImage {
         } else {
             drawView.removeGestureRecognizer(panGesture)
             scrollView.isScrollEnabled = true
-            //保存标注
-            if !FileManager.default.isExecutableFile(atPath: filePath()) {//文件存在
-                let result = FileManager.default.createFile(atPath: filePath(), contents: nil, attributes: nil)
-                if result {
-                    print("创建失败")
-                }
-            }
             
-           let dic = NSDictionary(dictionary: allPoints)//allPoints as! NSMutableDictionary
+            let dic = NSDictionary(dictionary: allPoints)//allPoints as! NSMutableDictionary
            let result = dic.write(toFile: filePath(), atomically: true)
-            if result {
-                print("保存成功")
+            if !result {
+                print("保存失败")
             }
-            
         }
     }
     
@@ -347,20 +338,25 @@ extension XDynamicLoadImage {
     
     @objc func panGestureAction(_ pan: UIPanGestureRecognizer) {
         let startPoint = pan.location(in: drawView)
-        var points = allPoints[currentIndex]
+        var points = allPoints["\(currentIndex)"]
         if points == nil {
             points = [[]]
         }
         switch pan.state {
         case .began:
-            drawingPoint.append(startPoint)
-            bezierPath.move(to: startPoint)
+            let value = [startPoint.x,startPoint.y]
+            drawingPoint.append(value)
             break
         case .changed:
             let movePoint = pan.location(in: drawView)
-            drawingPoint.append(movePoint)
+            let value = [movePoint.x,movePoint.y]
+            drawingPoint.append(value)
+            if points?.first?.count == 0 {
+                points?.remove(at: 0)
+            }
             points?.append(drawingPoint)
-            allPoints[currentIndex] = points
+            
+            allPoints["\(currentIndex)"] = points
             drawView.allPoints = allPoints
             drawView.setNeedsDisplay()
             break
@@ -378,50 +374,19 @@ extension XDynamicLoadImage {
         }
     }
     
-    //切换倍率的时候重新绘制
-    func reDrawPath() {
-        
-        return
-        bezierPath.removeAllPoints()
     
-        for (key, value) in allPoints {//遍历字典
-            for (_, points) in value.enumerated() {//遍历绘制的图形
-                for (index, point) in points.enumerated() {
-                    var newPoint: CGPoint = .zero
-                    
-                    if key == currentIndex {//不需要转换坐标
-                        newPoint = point
-                    } else {
-                        //当前所在的倍率
-                        let currentRateInfo = self.multipleSwitchView.multiples[currentIndex]
-                        
-                        //画标注时所在的倍率
-                        let rateInfo = multipleSwitchView.multiples[key]
-                
-                        let rX = CGFloat(currentRateInfo.heightNumber) / CGFloat(rateInfo.heightNumber)
-                        let rY = CGFloat(currentRateInfo.widthNumber) / CGFloat(rateInfo.widthNumber)
-                        
-                        newPoint.x = point.x * rX
-                        newPoint.y = point.y * rY
-                    }
-                    if index == 0 {
-                        bezierPath.move(to: newPoint)
-                    } else {
-                        bezierPath.addLine(to: newPoint)
-                    }
-                }
-            }
-        }
-        
-        shapelayer.path = bezierPath.cgPath
-    }
     
     @objc func cancelDrawAction(_ sender: UIButton) {
-        var tempAllPoint: [Int: [[CGPoint]]] = [:]
-        var tempValue:[[CGPoint]] = []
+        
+        if scrollView.isScrollEnabled {
+            return
+        }
+        
+        var tempAllPoint: [String: [[[CGFloat]]]] = [:]
+        var tempValue:[[[CGFloat]]] = []
         for (key, var value) in allPoints {//遍历字典
             print(value.count)
-            if key == currentIndex {//撤销当前倍率下的绘制
+            if key == "\(currentIndex)" {//撤销当前倍率下的绘制
                 tempAllPoint = allPoints
                 if value.count > 0 {
                     value.removeLast()

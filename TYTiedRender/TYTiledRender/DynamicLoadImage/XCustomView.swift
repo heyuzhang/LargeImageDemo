@@ -10,7 +10,7 @@ import UIKit
 
 class XCustomView: UIView {
     
-    var allPoints: [Int: [[CGPoint]]] = [:] {
+    var allPoints: [String: [[[CGFloat]]]] = [:] {
         didSet {
 //            setNeedsDisplay()
         }
@@ -52,17 +52,20 @@ class XCustomView: UIView {
             
             for (key, value) in allPoints {//遍历字典
                 for (_, points) in value.enumerated() {//遍历绘制的图形
-                    for (index, point) in points.enumerated() {
+                    for (index, pointArr) in points.enumerated() {
+                        let point = CGPoint(x: pointArr[0], y: pointArr[1])
                         var newPoint: CGPoint = .zero
                         
-                        if key == currentIndex {//不需要转换坐标
+                        if key == "\(currentIndex)" {//不需要转换坐标
+                            
                             newPoint = point
                         } else {
                             //当前所在的倍率
                             let currentRateInfo = multipleSwitchView!.multiples[currentIndex]
                             
+                            
                             //画标注时所在的倍率
-                            let rateInfo = multipleSwitchView!.multiples[key]
+                            let rateInfo = multipleSwitchView!.multiples[Int(key)!]
                             
                             let rX = CGFloat(currentRateInfo.heightNumber) / CGFloat(rateInfo.heightNumber)
                             let rY = CGFloat(currentRateInfo.widthNumber) / CGFloat(rateInfo.widthNumber)
