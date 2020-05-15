@@ -20,7 +20,6 @@
 		5CE170C7246E6B3400550F78 /* export_urls (倒数第二小倍率图片url).csv in Resources */ = {isa = PBXBuildFile; fileRef = 5CE170C6246E6B3400550F78 /* export_urls (倒数第二小倍率图片url).csv */; };
 		5CE170C9246E6BE500550F78 /* 1x.csv in Resources */ = {isa = PBXBuildFile; fileRef = 5CE170C8246E6BE500550F78 /* 1x.csv */; };
 		5CE170CB246E6E9500550F78 /* XFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE170CA246E6E9500550F78 /* XFileManager.swift */; };
-		5CE170CD246E703400550F78 /* XImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CE170CC246E703400550F78 /* XImageModel.swift */; };
 		7E559FA52D44F80A7D47B4F7 /* Pods_TYTiedRender.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 453D96DF036CFDB38A756362 /* Pods_TYTiedRender.framework */; };
 		C443BD032413D77400C1A693 /* ImageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = C443BCEB2413D77300C1A693 /* ImageCache.swift */; };
 		C443BD042413D77400C1A693 /* ThreadHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C443BCEC2413D77300C1A693 /* ThreadHelper.swift */; };
@@ -69,7 +68,6 @@
 		5CE170C6246E6B3400550F78 /* export_urls (倒数第二小倍率图片url).csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "export_urls (倒数第二小倍率图片url).csv"; sourceTree = "<group>"; };
 		5CE170C8246E6BE500550F78 /* 1x.csv */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = 1x.csv; sourceTree = "<group>"; };
 		5CE170CA246E6E9500550F78 /* XFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XFileManager.swift; sourceTree = "<group>"; };
-		5CE170CC246E703400550F78 /* XImageModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XImageModel.swift; sourceTree = "<group>"; };
 		5CE170CE246E91EE00550F78 /* TYTiedRender-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TYTiedRender-Bridging-Header.h"; sourceTree = "<group>"; };
 		941DA4196E309478A77FE5EB /* Pods-TYTiedRender.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TYTiedRender.release.xcconfig"; path = "Target Support Files/Pods-TYTiedRender/Pods-TYTiedRender.release.xcconfig"; sourceTree = "<group>"; };
 		BDEC1A9CC18D1A1CE8A719F4 /* Pods-TYTiedRender.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TYTiedRender.debug.xcconfig"; path = "Target Support Files/Pods-TYTiedRender/Pods-TYTiedRender.debug.xcconfig"; sourceTree = "<group>"; };
@@ -161,7 +159,6 @@
 				C4F0FA682421C76500554680 /* Viewport.swift */,
 				C4F0FA6A2421C80E00554680 /* Loading.swift */,
 				5CE170CA246E6E9500550F78 /* XFileManager.swift */,
-				5CE170CC246E703400550F78 /* XImageModel.swift */,
 			);
 			path = TYTiledRender;
 			sourceTree = "<group>";
@@ -381,7 +378,6 @@
 				C443BD192413D77400C1A693 /* ImagePrefetcher.swift in Sources */,
 				5C3241E624669D0D00ACDF19 /* XCustomView.swift in Sources */,
 				C443BD0A2413D77400C1A693 /* CacheSerializer.swift in Sources */,
-				5CE170CD246E703400550F78 /* XImageModel.swift in Sources */,
 				C443BD0D2413D77400C1A693 /* ImageDownloader.swift in Sources */,
 				C443BD072413D77400C1A693 /* ImageView+Kingfisher.swift in Sources */,
 				C443BD0B2413D77400C1A693 /* UIButton+Kingfisher.swift in Sources */,

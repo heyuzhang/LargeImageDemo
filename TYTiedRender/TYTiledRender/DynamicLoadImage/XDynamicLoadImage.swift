@@ -89,7 +89,6 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     
     //网络图片
     var fileManager: XFileManager = XFileManager(["1x"], type: "csv")
-    var currentImageModels: [XImageModel] = []
     
     lazy var coordinateManage: XCoordinateMagage = XCoordinateMagage()
    
