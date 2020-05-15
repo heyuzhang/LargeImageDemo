@@ -11,17 +11,13 @@ import UIKit
 @available(iOS 13.0, *)
 class ViewController: UIViewController {
 
-   lazy var viewPort = XImageView()
     
     var dymamicLoadImage: XDynamicLoadImage = XDynamicLoadImage()
-    lazy var imagePath: String = {
-        let sImage = Bundle.main.path(forResource: "缩率图", ofType: "png")
-        return sImage ?? ""
-    }()
     
     override func viewDidLoad() {
          super.viewDidLoad()
         view.addSubview(dymamicLoadImage)
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -31,7 +27,6 @@ class ViewController: UIViewController {
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
         dymamicLoadImage.frame = view.bounds
-        //          viewPort.showImage(imagePath, in: view, with: view.bounds)
     }
 
 }

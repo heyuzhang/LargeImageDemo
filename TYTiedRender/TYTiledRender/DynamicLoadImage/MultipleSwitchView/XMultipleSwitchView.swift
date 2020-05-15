@@ -18,6 +18,9 @@ struct Rateinfo {
     ///
     var widthNumber:Int
     var heightNumber:Int
+    
+    ///该倍率下的图片字典,一个名称对应一个图片url
+    var imageUrl: [String:String]?
 }
 
 class XMultipleSwitchView: UIView {
@@ -30,8 +33,10 @@ class XMultipleSwitchView: UIView {
     }
     
 
-    var buttonClickBlock:((Int)->())?
+    var buttonClickBlock:((Int, String)->())?
    
+    var rateName: String = ""
+    
     
     lazy var viewAttributes: XMultipleSwitchViewAttributes = XMultipleSwitchViewAttributes()
     
@@ -106,7 +111,9 @@ class XMultipleSwitchView: UIView {
     }
     
     public func clickButton(with index: NSInteger) {
-          buttonAction(buttons[index])
+        
+        
+        buttonAction(buttons[index])
       }
 }
 
@@ -159,7 +166,9 @@ extension XMultipleSwitchView {
 
         if !reClick {
             if let block = buttonClickBlock {
-                block(currentIndex)
+
+                rateName = multiples[currentIndex].rateName
+                block(currentIndex,rateName)
             }
         }
         

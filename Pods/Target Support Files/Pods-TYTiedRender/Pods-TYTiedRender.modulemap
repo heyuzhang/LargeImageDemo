@@ -1,0 +1,6 @@
+framework module Pods_TYTiedRender {
+  umbrella header "Pods-TYTiedRender-umbrella.h"
+
+  export *
+  module * { export * }
+}

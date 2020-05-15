@@ -45,8 +45,7 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         shape.lineWidth = 2;
         return shape
     }()
-    ///绘制path
-    private var bezierPath: UIBezierPath = UIBezierPath()
+    
     ///绘制手势pan
     private var panGesture: UIPanGestureRecognizer!
 
@@ -85,10 +84,12 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         }
     }
     
-    //网络加载的图片数组 需进一步处理
-    var netImages: [UIImage]?
-    //网络图片给的是url，也需要另处理
-    var netImageURLStrs: [String]?
+    ///倍率切换view
+    lazy var multipleSwitchView: XMultipleSwitchView = XMultipleSwitchView()
+    
+    //网络图片
+    var fileManager: XFileManager = XFileManager(["1x"], type: "csv")
+    var currentImageModels: [XImageModel] = []
     
     lazy var coordinateManage: XCoordinateMagage = XCoordinateMagage()
    
@@ -120,8 +121,7 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
             
         }
     }
-    ///倍率切换view
-    lazy var multipleSwitchView: XMultipleSwitchView = XMultipleSwitchView()
+    
     
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -183,7 +183,6 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
    
     private func setupUI() {
         
-       
         
         scrollView.delegate = self
         scrollView.maximumZoomScale = 1000
@@ -203,7 +202,6 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         self.tiledLayer = tiledLayer
         tiledLayer.delegate = tiledLayerDelegate
         imageView.layer.addSublayer(tiledLayer)
-//        imageView.backgroundColor = .red
         
         imageView.frame = tiledLayer.bounds
         scrollView.contentSize = tiledLayer.frame.size
@@ -213,19 +211,25 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         //倍率切换
         multipleSwitchView.backgroundColor = UIColor.init(white: 0, alpha: 0.1)
         
-        multipleSwitchView.multiples = [
-
-            Rateinfo(imagePrefix: "5", rateName: "1x",widthNumber: 6, heightNumber: 6),
-            Rateinfo(imagePrefix: "4", rateName: "5x",widthNumber: 11, heightNumber: 12),
-//            Rateinfo(imagePrefix: "3", rateName: "10x",widthNumber: 22, heightNumber: 24),
-//            Rateinfo(imagePrefix: "2", rateName: "20x",widthNumber: 44, heightNumber: 47),
-//            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 88, heightNumber: 94),
-//            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 86, heightNumber: 92)
-        ]
-        multipleSwitchView.buttonClickBlock = { index in
+        multipleSwitchView.multiples = fileManager.imageModels
+        
+//        multipleSwitchView.multiples = [
+//
+//            Rateinfo(imagePrefix: "5", rateName: "1x",widthNumber: 6, heightNumber: 6),
+//            Rateinfo(imagePrefix: "4", rateName: "5x",widthNumber: 11, heightNumber: 12),
+////            Rateinfo(imagePrefix: "3", rateName: "10x",widthNumber: 22, heightNumber: 24),
+////            Rateinfo(imagePrefix: "2", rateName: "20x",widthNumber: 44, heightNumber: 47),
+////            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 88, heightNumber: 94),
+////            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 86, heightNumber: 92)
+//        ]
+        
+        multipleSwitchView.buttonClickBlock = { (index, rateName) in
+            
+           
             self.scrollView.setZoomScale(1, animated: false)
             self.currentIndex = index
             self.drawView.currentIndex = index
+            
         }
         
         addSubview(multipleSwitchView)

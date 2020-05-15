@@ -26,6 +26,8 @@ class XTiledLayerDelegate: NSObject, CALayerDelegate {
     //网络图片给的是url，也需要另处理
     var netImageURLStrs: [String]?
     
+    var imageModels: [XImageModel] = []
+    
     
     private var coordinateManage: XCoordinateMagage = XCoordinateMagage()
     private var loading: Loading = Loading()
@@ -39,17 +41,19 @@ class XTiledLayerDelegate: NSObject, CALayerDelegate {
             
             
         } else {
-            if let imageName = coordinateManage.imageName(in: ctx, use: layer as! CATiledLayer, with:imageNamePrefix),
-                let imageSource = loading.loadingImage(numStr: imageName),
-                let cgSourceImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) {
-//                print(imageName,imageNamePrefix ?? "")
-                let image = UIImage(cgImage: cgSourceImage)
-                UIGraphicsPushContext(ctx)
-                image.draw(in: bounds)
-                UIGraphicsPopContext()
+            if let imageName = coordinateManage.imageName(in: ctx, use: layer as! CATiledLayer, with:imageNamePrefix) {
+                
+                if let imageSource = loading.loadingImage(numStr: imageName),
+                    let cgSourceImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) {
+                    let image = UIImage(cgImage: cgSourceImage)
+                    UIGraphicsPushContext(ctx)
+                    image.draw(in: bounds)
+                    UIGraphicsPopContext()
+                } else { //网络图片
+                    
+                    
+                }
             }
         }
     }
-    
-    
 }
