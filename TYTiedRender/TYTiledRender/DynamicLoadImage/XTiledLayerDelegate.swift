@@ -21,39 +21,26 @@ class XTiledLayerDelegate: NSObject, CALayerDelegate {
         }
     }
     
-    //网络加载的图片数组 需进一步处理
-    var netImages: [UIImage]?
-    //网络图片给的是url，也需要另处理
-    var netImageURLStrs: [String]?
-    
-    var imageModels: [XImageModel] = []
-    
-    
     private var coordinateManage: XCoordinateMagage = XCoordinateMagage()
     private var loading: Loading = Loading()
 
     
     func draw(_ layer: CALayer, in ctx: CGContext) {
         let bounds = ctx.boundingBoxOfClipPath
-        if netImages != nil && netImages!.count > 0 || netImageURLStrs != nil && netImageURLStrs!.count > 0 {//需要另外处理
+        
+        if let imageName = coordinateManage.imageName(in: ctx, use: layer as! CATiledLayer, with:imageNamePrefix) {
             
-            print("需要处理网络请求回来的")
-            
-            
-        } else {
-            if let imageName = coordinateManage.imageName(in: ctx, use: layer as! CATiledLayer, with:imageNamePrefix) {
+            if let imageSource = loading.loadingImage(numStr: imageName),
+                let cgSourceImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) {
+                let image = UIImage(cgImage: cgSourceImage)
+                UIGraphicsPushContext(ctx)
+                image.draw(in: bounds)
+                UIGraphicsPopContext()
+            } else { //网络图片
                 
-                if let imageSource = loading.loadingImage(numStr: imageName),
-                    let cgSourceImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) {
-                    let image = UIImage(cgImage: cgSourceImage)
-                    UIGraphicsPushContext(ctx)
-                    image.draw(in: bounds)
-                    UIGraphicsPopContext()
-                } else { //网络图片
-                    
-                    
-                }
+                
             }
         }
+        
     }
 }
