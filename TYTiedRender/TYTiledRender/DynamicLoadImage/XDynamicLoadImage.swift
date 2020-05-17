@@ -67,6 +67,7 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
                 drawView.frame = imageView.bounds
                 tiledLayer?.frame = CGRect(x: 0, y: 0, width: imagePixel.width, height: imagePixel.height)
                 tiledLayerDelegate.imageNamePrefix = imageNamePrefix
+                tiledLayerDelegate.imageUrls = currentRateImageURL
                 tiledLayer?.setNeedsDisplay()
                 shapelayer.frame = CGRect(x: 0, y: 0, width: imagePixel.width, height: imagePixel.height)
                 
@@ -78,9 +79,17 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     var imageNamePrefix: String? {
         didSet {
             tiledLayerDelegate.imageNamePrefix = imageNamePrefix
+            tiledLayerDelegate.imageUrls = currentRateImageURL
             if tiledLayer != nil {
                 tiledLayer?.setNeedsDisplay()
             }
+        }
+    }
+    
+    ///当前倍率下图片的url
+    var currentRateImageURL: [String:String]? {
+        get {
+            multipleSwitchView.multiples[currentIndex].imageUrl
         }
     }
     
@@ -88,7 +97,7 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     lazy var multipleSwitchView: XMultipleSwitchView = XMultipleSwitchView()
     
     //网络图片
-    var fileManager: XFileManager = XFileManager(["1x"], type: "csv")
+    var fileManager: XFileManager = XFileManager(["export_urls-5"], type: "csv")
     
     lazy var coordinateManage: XCoordinateMagage = XCoordinateMagage()
    
@@ -99,6 +108,10 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     
     ///scrollView当前的偏距
     private var currentOffset: CGPoint = .zero
+    
+    var imageViewTest = UIImageView()
+    
+    
     ///当前倍率索引
     private var currentIndex: Int = 0 {
         willSet {
@@ -157,6 +170,9 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        
+        imageViewTest.frame = bounds
+        
         scrollView.frame = bounds
         multipleSwitchView.frame = CGRect(x: 0, y: bounds.size.height - 50, width: bounds.size.width, height: 50)
         if  multipleSwitchView.multiples.count != 0  {
@@ -174,15 +190,11 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         cancelBtn.frame = CGRect(x: 0, y: (bounds.size.height - 50) * 0.5 + 100, width: 50, height: 50)
         cancelBtn.layer.cornerRadius = 25
         cancelBtn.layer.masksToBounds = true
-        
-        
     }
     
     private var tiledLayerDelegate: XTiledLayerDelegate = XTiledLayerDelegate()
    
     private func setupUI() {
-        
-        
         scrollView.delegate = self
         scrollView.maximumZoomScale = 1000
         scrollView.minimumZoomScale = 0.2
@@ -195,12 +207,17 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         addSubview(scrollView)
         scrollView.addSubview(imageView)
         
+        
+        
         let tiledLayer = CATiledLayer()
         tiledLayer.frame = CGRect(x: 0, y: 0, width: imagePixel.width, height: imagePixel.height)
         tiledLayer.tileSize = CGSize(width: 256, height: 256)
         self.tiledLayer = tiledLayer
         tiledLayer.delegate = tiledLayerDelegate
         imageView.layer.addSublayer(tiledLayer)
+        tiledLayerDelegate.tiledLayer = tiledLayer
+        imageViewTest.backgroundColor = UIColor.orange
+        tiledLayerDelegate.imageView = imageViewTest
         
         imageView.frame = tiledLayer.bounds
         scrollView.contentSize = tiledLayer.frame.size
@@ -210,17 +227,17 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         //倍率切换
         multipleSwitchView.backgroundColor = UIColor.init(white: 0, alpha: 0.1)
         
-//        multipleSwitchView.multiples = fileManager.imageModels
+        multipleSwitchView.multiples = fileManager.imageModels
         
-        multipleSwitchView.multiples = [
-
-            Rateinfo(imagePrefix: "5", rateName: "1x",widthNumber: 6, heightNumber: 6),
-            Rateinfo(imagePrefix: "4", rateName: "5x",widthNumber: 11, heightNumber: 12),
-//            Rateinfo(imagePrefix: "3", rateName: "10x",widthNumber: 22, heightNumber: 24),
-//            Rateinfo(imagePrefix: "2", rateName: "20x",widthNumber: 44, heightNumber: 47),
-//            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 88, heightNumber: 94),
-//            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 86, heightNumber: 92)
-        ]
+//        multipleSwitchView.multiples = [
+//
+//            Rateinfo(imagePrefix: "5", rateName: "1x",widthNumber: 6, heightNumber: 6),
+//            Rateinfo(imagePrefix: "4", rateName: "5x",widthNumber: 11, heightNumber: 12),
+////            Rateinfo(imagePrefix: "3", rateName: "10x",widthNumber: 22, heightNumber: 24),
+////            Rateinfo(imagePrefix: "2", rateName: "20x",widthNumber: 44, heightNumber: 47),
+////            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 88, heightNumber: 94),
+////            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 86, heightNumber: 92)
+//        ]
         
         multipleSwitchView.buttonClickBlock = { (index, rateName) in
             

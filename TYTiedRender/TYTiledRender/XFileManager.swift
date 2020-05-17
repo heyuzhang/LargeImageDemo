@@ -36,7 +36,7 @@ class XFileManager: NSObject {
                 let fileData = loadFileData(filePath),
                 let imageModels = resolveData(fileData, fileName:fileName) {
                 self.imageModels.append(imageModels)
-                print(self.imageModels)
+//                print(self.imageModels)
             }
         }
     }
@@ -56,7 +56,7 @@ extension XFileManager {
     private func loadFileData(_ filePath: String) -> String? {
         
         let fileData = try? NSString(contentsOfFile: filePath, encoding: String.Encoding.utf8.rawValue) as String
-        print(fileData ?? "暂无数据")
+//        print(fileData ?? "暂无数据")
         return fileData
     }
     
@@ -66,7 +66,7 @@ extension XFileManager {
         var imagePrefix: String? = nil
         var imageUrl: [String:String] = [:]
         let dataArray = data.components(separatedBy: "\n")
-        
+        var rateName: String = fileName
         for (index, value) in dataArray.enumerated() {
             
             if index != 0 {//不需要表头
@@ -105,7 +105,11 @@ extension XFileManager {
         let lastName = sortedImageNames[sortedImageNames.count - 1]
         let lastNameArray = lastName.components(separatedBy: "_")
         
-        let rateinfo = Rateinfo(imagePrefix: imagePrefix ?? "", rateName: fileName, widthNumber: Int(lastNameArray[1]) ?? 0, heightNumber: Int(lastNameArray[2]) ?? 0, imageUrl: imageUrl)
+        rateName = "\(lastNameArray[0])x"
+        let widthNumber = Int(lastNameArray[1]) ?? 0
+        let heightNumber = Int(lastNameArray[2]) ?? 0
+        
+        let rateinfo = Rateinfo(imagePrefix: imagePrefix ?? "", rateName: rateName, widthNumber: (widthNumber + 1) , heightNumber: (heightNumber + 1), imageUrl: imageUrl)
         
         return rateinfo
     }

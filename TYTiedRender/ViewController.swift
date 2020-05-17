@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 @available(iOS 13.0, *)
 class ViewController: UIViewController {
@@ -29,5 +30,13 @@ class ViewController: UIViewController {
         dymamicLoadImage.frame = view.bounds
     }
 
+    override func didReceiveMemoryWarning() {
+        //移除缓存
+        SDImageCache.shared().clearMemory()
+        SDImageCache.shared().clearDisk {
+            print("清理缓存")
+        }
+    }
+    
 }
 
