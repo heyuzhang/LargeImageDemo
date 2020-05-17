@@ -30,8 +30,6 @@ class XTiledLayerDelegate: NSObject, CALayerDelegate {
     let semaphore = DispatchSemaphore(value: 1)
     
     
-    
-    
     var reLoad: Bool = false
     
     //图片名称的前缀 本地图片
@@ -65,42 +63,36 @@ class XTiledLayerDelegate: NSObject, CALayerDelegate {
         
        let imageInfo = coordinateManage.imageName(in: ctx, use: layer as! CATiledLayer, with:imageNamePrefix, imageURLs: imageUrls)
         
-        let imageCache = SDImageCache.shared()
-        var image = imageCache.imageFromDiskCache(forKey: imageInfo.1)
-
-        if image == nil {
-            image = imageCache.imageFromMemoryCache(forKey: imageInfo.1)
-        }
-
-        if image != nil {
-            UIGraphicsPushContext(ctx)
-            image!.draw(in: bounds)
-            UIGraphicsPopContext()
-        } else {
-            //通知重新下载
-            loadImage(name: imageInfo.0 ?? "")
-        }
+        
        
         
-//        if let imageName = imageInfo.0 {
-//            if let imageSource = loading.loadingImage(numStr: imageName),
-//                let cgSourceImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) {
-//                let image = UIImage(cgImage: cgSourceImage)
-//                UIGraphicsPushContext(ctx)
-//                image.draw(in: bounds)
-//                UIGraphicsPopContext()
-//            } else { //网络图片
-//                if let imagUrl = imageInfo.1 {
-//                    loading.loadingImage(imagUrl) { (image) in
-////                        if image != nil {
-////                            UIGraphicsPushContext(ctx)
-////                            image!.draw(in: bounds)
-////                            UIGraphicsPopContext()
-////                        }
-//                    }
-//                }
-//            }
-//        }
+        if let imageName = imageInfo.0 {
+            if let imageSource = loading.loadingImage(numStr: imageName),
+                let cgSourceImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) {
+                let image = UIImage(cgImage: cgSourceImage)
+                UIGraphicsPushContext(ctx)
+                image.draw(in: bounds)
+                UIGraphicsPopContext()
+            } else { //网络图片
+                
+                let imageCache = SDImageCache.shared()
+                var image = imageCache.imageFromDiskCache(forKey: imageInfo.1)
+
+                if image == nil {
+                    image = imageCache.imageFromMemoryCache(forKey: imageInfo.1)
+                }
+
+                if image != nil {
+                    UIGraphicsPushContext(ctx)
+                    image!.draw(in: bounds)
+                    UIGraphicsPopContext()
+                } else {
+                    //通知重新下载
+                    loadImage(name: imageInfo.0 ?? "")
+                }
+                
+            }
+        }
     }
 }
 
