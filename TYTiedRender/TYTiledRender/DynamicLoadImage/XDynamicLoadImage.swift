@@ -210,17 +210,17 @@ class XDynamicLoadImage: UIView,UIScrollViewDelegate {
         //倍率切换
         multipleSwitchView.backgroundColor = UIColor.init(white: 0, alpha: 0.1)
         
-        multipleSwitchView.multiples = fileManager.imageModels
+//        multipleSwitchView.multiples = fileManager.imageModels
         
-//        multipleSwitchView.multiples = [
-//
-//            Rateinfo(imagePrefix: "5", rateName: "1x",widthNumber: 6, heightNumber: 6),
-//            Rateinfo(imagePrefix: "4", rateName: "5x",widthNumber: 11, heightNumber: 12),
-////            Rateinfo(imagePrefix: "3", rateName: "10x",widthNumber: 22, heightNumber: 24),
-////            Rateinfo(imagePrefix: "2", rateName: "20x",widthNumber: 44, heightNumber: 47),
-////            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 88, heightNumber: 94),
-////            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 86, heightNumber: 92)
-//        ]
+        multipleSwitchView.multiples = [
+
+            Rateinfo(imagePrefix: "5", rateName: "1x",widthNumber: 6, heightNumber: 6),
+            Rateinfo(imagePrefix: "4", rateName: "5x",widthNumber: 11, heightNumber: 12),
+//            Rateinfo(imagePrefix: "3", rateName: "10x",widthNumber: 22, heightNumber: 24),
+//            Rateinfo(imagePrefix: "2", rateName: "20x",widthNumber: 44, heightNumber: 47),
+//            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 88, heightNumber: 94),
+//            Rateinfo(imagePrefix: "1", rateName: "40x",widthNumber: 86, heightNumber: 92)
+        ]
         
         multipleSwitchView.buttonClickBlock = { (index, rateName) in
             
