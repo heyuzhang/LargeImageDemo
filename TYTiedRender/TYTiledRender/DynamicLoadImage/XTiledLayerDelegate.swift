@@ -59,12 +59,7 @@ class XTiledLayerDelegate: NSObject, CALayerDelegate {
     func draw(_ layer: CALayer, in ctx: CGContext) {
         let bounds = ctx.boundingBoxOfClipPath
         
-//        print(Thread.current)
-        
        let imageInfo = coordinateManage.imageName(in: ctx, use: layer as! CATiledLayer, with:imageNamePrefix, imageURLs: imageUrls)
-        
-        
-       
         
         if let imageName = imageInfo.0 {
             if let imageSource = loading.loadingImage(numStr: imageName),
@@ -76,10 +71,10 @@ class XTiledLayerDelegate: NSObject, CALayerDelegate {
             } else { //网络图片
                 
                 let imageCache = SDImageCache.shared()
-                var image = imageCache.imageFromDiskCache(forKey: imageInfo.1)
+                var image = imageCache.imageFromMemoryCache(forKey: imageInfo.1)
 
                 if image == nil {
-                    image = imageCache.imageFromMemoryCache(forKey: imageInfo.1)
+                    image = imageCache.imageFromDiskCache(forKey: imageInfo.1)
                 }
 
                 if image != nil {
